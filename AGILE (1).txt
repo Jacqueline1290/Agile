@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reserva de Salas e Laboratórios</title>
+    <style>
+        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: none; 
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .nav-button {
+            background-color: #764ba2;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-icon {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .nav-container.responsive {
+            display: block;
+            text-align: left;
+        }
+
+        .nav-container.responsive .nav-button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .logout-icon {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .login-container {
+            text-align: center;
+            margin: auto;
+            max-width: 400px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .login-container h1 {
+            color: #ffffff;
+        }
+
+        .login-container form {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            color: #333;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .login-container button {
+            background-color: #764ba2;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-container a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            display: block;
+        }
+
+        .login-container a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 100px auto 0 auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        section {
+            display: none;
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 700px;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #000000;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 0.5rem 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #764ba2;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .menu-icon {
+                display: block;
+            }
+
+            .nav-container {
+                display: none;
+                flex-direction: column;
+            }
+
+            .nav-container.responsive {
+                display: flex;
+            }
+
+            .nav-button {
+                padding: 0.5rem 1rem;
+                width: 100%;
+            }
+
+            header {
+                padding: 0.5rem;
+            }
+
+            section {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            footer {
+                font-size: 0.8rem;
+            }
+
+            .logout-icon {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <header id="main-header">
+        <span class="menu-icon" onclick="toggleMenu()">☰</span>
+        <div class="nav-container" id="navMenu">
+            <a href="#cadastrar" class="nav-button admin-only">Cadastrar Salas</a>
+            <a href="#reservar" class="nav-button">Reservar Salas</a>
+            <a href="#ocupacao" class="nav-button admin-only">Salas Ocupadas</a>
+            <a href="#turmas" class="nav-button admin-only">Cadastrar Turmas</a>
+            <a href="#relatorios" class="nav-button">Histórico</a>
+            <a href="#ocorrencias-chamados" class="nav-button admin-only">Ocorrências de Chamados</a>
+            <a href="#abrir-chamado" class="nav-button docente-only">Abrir Chamado</a>
+        </div>
+        <span class="logout-icon" onclick="logout()">➔</span>
+    </header>
+    <main>
+        
+        <div class="login-container" id="login-admin">
+            <h1>Administrador</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="admin-username">Usuário:</label>
+                    <input type="text" id="admin-username" placeholder="adm.matricula@uneb.br" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Senha:</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit">Entrar</button>
+                <a href="#login-user" id="switch-to-user">Entrar como docente</a>
+            </form>
+        </div>
+
+        <div class="login-container" id="login-user" style="display: none;">
+            <h1>Docente</h1>
+            <form id="user-login-form">
+                <div class="form-group">
+                    <label for="user-email">E-mail:</label>
+                    <input type="email" id="user-email" placeholder="matricula@uneb.br" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Senha:</label>
+                    <input type="password" id="user-password" required>
+                </div>
+                <button type="submit">Entrar</button>
+                <a href="#login-admin" id="switch-to-admin">Entrar como admin</a>
+            </form>
+        </div>
+
+        <section id="cadastrar">
+            <h1>Cadastro  de Salas e Laboratórios</h1>
+            <form id="form-salas">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="localizacao">Localização:</label>
+                    <input type="text" id="localizacao" required>
+                </div>
+                <div class="form-group">
+                    <label for="capacidade">Capacidade:</label>
+                    <input type="number" id="capacidade" required>
+                </div>
+                <button type="submit">Cadastrar Sala/Laboratório</button>
+            </form>
+            <div id="salas-lista"></div>
+        </section>
+        
+        <section id="reservar">
+            <h1>Reservar Sala ou Laboratório</h1>
+            <form id="form-reserva">
+                <div class="form-group">
+                    <label for="data">Data:</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="form-group">
+                    <label for="horario-inicio">Horário de Início:</label>
+                    <input type="time" id="horario-inicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="horario-fim">Horário de Fim:</label>
+                    <input type="time" id="horario-fim" required>
+                </div>
+                <div class="form-group">
+                    <label for="sala">Sala/Laboratório:</label>
+                    <select id="sala" required></select>
+                </div>
+                <button type="submit">Reservar</button>
+            </form>
+        </section>
+
+        <section id="ocupacao">
+            <h1>Gestão da Ocupação</h1>
+            <form id="form-filtro">
+                <div class="form-group">
+                    <label for="filtro-turno">Filtrar por Turno:</label>
+                    <select id="filtro-turno">
+                        <option value="matutino">Matutino</option>
+                        <option value="vespertino">Vespertino</option>
+                        <option value="noturno">Noturno</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-localizacao">Filtrar por Localização:</label>
+                    <select id="filtro-localizacao">
+                        <option value="terreo">Térreo</option>
+                        <option value="primeiro-andar">Primeiro Andar</option>
+                        <option value="predio-azul">Prédio Azul</option>
+                        <option value="predio-rosa">Prédio Rosa</option>
+                        <option value="pos-critica">Pós Crítica</option>
+                    </select>
+                </div>
+                <button type="submit">Aplicar Filtro</button>
+            </form>
+            <div id="ocupacao-lista"></div>
+        </section>
+        
+        <section id="turmas">
+            <h1>Cadastrar Turmas</h1>
+            <form id="form-turma">
+                <div class="form-group">
+                    <label for="turma-nome">Nome da Turma:</label>
+                    <input type="text" id="turma-nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="turma-horario">Horário:</label>
+                    <input type="time" id="turma-horario" required>
+                </div>
+                <div class="form-group">
+                    <label for="turma-turno">Turno:</label>
+                    <select id="turma-turno" required>
+                        <option value="matutino">Matutino</option>
+                        <option value="vespertino">Vespertino</option>
+                        <option value="noturno">Noturno</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="turma-sala">Sala:</label>
+                    <select id="turma-sala" required></select>
+                </div>
+                <button type="submit">Cadastrar Turma</button>
+            </form>
+            <div id="turmas-lista"></div>
+        </section>
+
+        <section id="relatorios">
+            <h1>Relatórios e Histórico de Ocupação</h1>
+            <form id="form-relatorios">
+                <div class="form-group">
+                    <label for="relatorio-data">Data:</label>
+                    <input type="date" id="relatorio-data" required>
+                </div>
+                <button type="submit">Gerar Relatório</button>
+            </form>
+            <div id="relatorios-lista"></div>
+        </section>
+        
+        <section id="ocorrencias-chamados">
+            <h1>Ocorrências de Chamados</h1>
+            <form id="form-status-chamado">
+                <div class="form-group">
+                    <label for="filtro-status">Filtrar por Status:</label>
+                    <select id="filtro-status">
+                        <option value="aberto">Abertos</option>
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="concluido">Concluídos</option>
+                    </select>
+                </div>
+                <button type="submit">Aplicar Filtro</button>
+            </form>
+            <div id="ocorrencias-lista"></div>
+        </section>
+        
+        <section id="abrir-chamado">
+            <h1>Abrir Chamado de Manutenção</h1>
+            <form id="form-chamado">
+                <div class="form-group">
+                    <label for="descricao">Descrição do Problema:</label>
+                    <textarea id="descricao" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="setor">Selecionar Setor:</label>
+                    <select id="setor" required>
+                        <option value="TI">TI</option>
+                        <option value="Coordenacao">Coordenação</option>
+                        <option value="Manutencao">Manutenção</option>
+                        <option value="Secretaria">Secretaria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="anexos">Anexar Arquivos:</label>
+                    <input type="file" id="anexos" multiple>
+                </div>
+                <button type="submit">Enviar</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Sistema de Reserva de Salas e Laboratórios</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('responsive');
+        }
+
+        function logout() {
+            alert('Você saiu do sistema.');
+            location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginAdmin = document.getElementById('login-admin');
+            const loginUser = document.getElementById('login-user');
+            const header = document.getElementById('main-header');
+            const logoutIcon = document.querySelector('.logout-icon');
+            const sections = document.querySelectorAll('main section');
+            const adminOnlyElements = document.querySelectorAll('.admin-only');
+            const docenteOnlyElements = document.querySelectorAll('.docente-only');
+
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = button.getAttribute('href').substring(1);
+                    sections.forEach(section => {
+                        section.style.display = section.id === targetId ? 'block' : 'none';
+                    });
+                    if (window.innerWidth <= 768) {
+                        toggleMenu(); 
+                    }
+                });
+            });
+
+            document.getElementById('switch-to-user').addEventListener('click', (event) => {
+                event.preventDefault();
+                loginAdmin.style.display = 'none';
+                loginUser.style.display = 'block';
+            });
+
+            document.getElementById('switch-to-admin').addEventListener('click', (event) => {
+                event.preventDefault();
+                loginUser.style.display = 'none';
+                loginAdmin.style.display = 'block';
+            });
+
+            function isSequential(password) {
+                const sequentialPatterns = [
+                    "012345", "123456", "234567", "345678", "456789", "567890",
+                    "987654", "876543", "765432", "654321", "543210"
+                ];
+                return sequentialPatterns.includes(password);
+            }
+
+            document.getElementById('login-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const email = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                const emailPattern = /^adm\.[0-9]{9}@uneb\.br$/;
+                const passwordPattern = /^\d{6}$/;
+
+                if (!emailPattern.test(email)) {
+                    alert('O e-mail do administrador deve seguir o padrão: adm.123456789@uneb.br');
+                    return;
+                }
+
+                if (!passwordPattern.test(password) || isSequential(password)) {
+                    alert('A senha deve conter exatamente 6 dígitos não sequenciais.');
+                    return;
+                }
+
+                loginAdmin.style.display = 'none';
+                header.style.display = 'flex';
+                logoutIcon.style.display = 'block'; 
+                adminOnlyElements.forEach(el => el.style.display = 'block');
+                docenteOnlyElements.forEach(el => el.style.display = 'none');
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.querySelector('#cadastrar').style.display = 'block'; 
+            });
+
+            document.getElementById('user-login-form').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const email = document.getElementById('user-email').value;
+                const password = document.getElementById('user-password').value;
+                const emailPattern = /^[0-9]{9}@uneb\.br$/;
+                const passwordPattern = /^\d{6}$/;
+
+                if (!emailPattern.test(email)) {
+                    alert('O e-mail deve ter 9 dígitos seguidos de @uneb.br');
+                    return;
+                }
+
+                if (!passwordPattern.test(password) || isSequential(password)) {
+                    alert('A senha deve conter exatamente 6 dígitos não sequenciais.');
+                    return;
+                }
+
+                loginUser.style.display = 'none';
+                header.style.display = 'flex';
+                logoutIcon.style.display = 'block'; 
+                adminOnlyElements.forEach(el => el.style.display = 'none'); 
+                docenteOnlyElements.forEach(el => el.style.display = 'block'); 
+                sections.forEach(section => {
+                    section.style.display = 'none'; 
+                });
+                document.querySelector('#reservar').style.display = 'block'; 
+            });
+            
+            document.addEventListener('click', (event) => {
+                const navMenu = document.getElementById('navMenu');
+                const menuIcon = document.querySelector('.menu-icon');
+                if (window.innerWidth <= 768 && navMenu.classList.contains('responsive') && !navMenu.contains(event.target) && !menuIcon.contains(event.target)) {
+                    toggleMenu();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
